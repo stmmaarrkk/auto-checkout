@@ -1,0 +1,22 @@
+configs/myinfo.json
+configs/info.json
+configs/browser_configs.json
+
+#util/__pycache__
+*/__pycache__
+model/Pchome.py
+
+.vscode
+.DS_store
+
+
+demo.mov
+
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
