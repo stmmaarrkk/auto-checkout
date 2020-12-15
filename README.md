@@ -21,7 +21,7 @@ This is a program contains various helper functions for Momo.
 <ol type="1">
   <li> Clone the whole directory to your Mac.
   <li> Install Pyhon 3.7.3 or above
-  <li> Open your command line use "cd" go to the "auto_check" directory.
+  <li> Open your command line use <code>cd some_dir</code> go to the "auto_check" directory.
   <li> In the first time, type <code>./setup</code> to build the executed environmentrun. (You don't have to run <code>./setup</code> every time before launching "Momo_helper", run in the first time or some unexpected error happens)
   <li> Type <code>./Momo_helper</code> to run the program and follow the instructions.
 </ol>
