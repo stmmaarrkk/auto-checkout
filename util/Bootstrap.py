@@ -20,7 +20,7 @@ class Bootstrap:
             self.configs = json.load(f)
 
         updated = False
-        if self.configs["chrome_driver_version"] == "":
+        if self.configs["chrome_driver_version"] == "" or not os.path.isfile(self.configs["chrome_driver_path"]):
             updated = True
             self.downloadChromeDriver()
 
