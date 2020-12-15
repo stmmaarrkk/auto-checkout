@@ -21,10 +21,18 @@ class Momo:
         
         self.browser.find_element_by_xpath("//span[@class='CL1']//a[@id='LOGINSTATUS']").click()
         
-        for i in range(5):
+        maxRetry = 3
+        for i in range(maxRetry+1):
+            if i == maxRetry:
+                clearInput('失敗次數過多，請手動登入後，按 "Enter"繼續....')
+                break
             try:
+                print("Login attempt...") 
                 #password
-                self.browser.find_element_by_id("passwd_show").click()
+                try:
+                    self.browser.find_element_by_id("passwd_show").click()
+                except:
+                    pass
                 blankPassword = self.browser.find_element_by_id("passwd")
                 blankPassword.clear
                 blankPassword.send_keys(self.info.loginInfo["password"])
@@ -35,24 +43,28 @@ class Momo:
                 blankUserame.send_keys(self.info.loginInfo["username"])
                 self.browser.find_element_by_class_name("loginBtn").click()
 
-                #if wait for 1 second, there is still a login button, then login again
-                self.browser.implicitly_wait(1)
-                if self.browser.find_element_by_class_name("loginBtn"):
-                    continue
+                #if wait for 1 second, there is still a 註冊(class='CL4') button, then login again
+                self.browser.implicitly_wait(3)
+                try:
+                    self.browser.find_element_by_class_name("loginBtn").click()
+                except:
+                    clearPrint("Login succeeded!")
+                    self.browser.implicitly_wait(0.5)
+                    break
+                else:
+                    raise Exception
             except:
-                print("Login attempt...")  
-            else:
-                print("Login succeeded")
-                break
-
+                continue
+        
     def getItemInfoFromTrackList(self):
-        clearPrint(" ")
-        #a element cover this thing, so we have to split click into 2-step
         print("Accessing track list...")
+        #a element cover this thing, so we have to split click into 2-step
         wait = WebDriverWait(self.browser, 10).until(
             EC.visibility_of_element_located((By.XPATH, "//a[@title='追蹤清單']")))
         element = self.browser.find_element_by_xpath("//a[@title='追蹤清單']") 
         self.browser.execute_script("arguments[0].click();", element)
+        print("Track list accessed")
+
         while True:
             try:
                 self.itemTag = input("輸入商品編號(追蹤清單裡面會顯示): ").replace(" ", "")
@@ -60,11 +72,11 @@ class Momo:
                 
                 #ensure the item exists
                 self.browser.find_element_by_xpath("//a[@name='{}' and @target='_blank']".format(self.itemTag))
+
+                break
             except Exception as e:
                 print('找不到對應的 "商品編號" 請重新輸入....')
-            else:
-                break
-        print("Track list accessed")
+                
     def goToItemPage(self):
         print("Redirecting to item page...")
         self.browser.find_element_by_xpath("//a[@name='{}' and @target='_blank']".format(self.itemTag)).click()

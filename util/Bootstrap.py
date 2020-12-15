@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 import os
 import json
-from fake_useragent import UserAgent
+import random
 
 class Bootstrap:
     def __init__(self):
@@ -15,7 +15,7 @@ class Bootstrap:
 
     def prepareConfigs(self, configFile="./configs/browser_configs.json"):
         #prepare configs
-        assert os.path.isfile(configFile), "configs.json file doesn't exist!"
+        assert os.path.isfile(configFile), "browser_configs.json file doesn't exist!"
         with open(configFile, 'r') as f:
             self.configs = json.load(f)
 
@@ -37,8 +37,13 @@ class Bootstrap:
                 self.configs = json.load(f)
 
     def generateUserAgent(self):
-        ua = UserAgent()
-        return ua.chrome
+        ua = None
+        with open("./configs/user_agent_pool", "r") as f:
+            lines = f.readlines()
+            randNum = random.randint(0, len(lines)-1)
+            ua = lines[randNum]
+        assert len(ua) != 0, "user-agent should not be empty"
+        return ua
 
     def launchBrowser(self):
         # inject configs

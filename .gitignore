@@ -16,6 +16,7 @@ env
 
 build
 dist
+generate.py
 
 ### Example user template template
 ### Example user template
