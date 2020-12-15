@@ -1,4 +1,6 @@
+# -*- coding: UTF-8 -*-
 import json
+import os
 
 def getInfoTemplate():
     return {
@@ -34,6 +36,9 @@ def getBrowserConfigs():
 
 def main():
     BASEDIR = "./configs/"
+    if os.path.isdir(BASEDIR):
+        os.system("rm -r {}".format(BASEDIR))
+    os.mkdir(BASEDIR)
 
     with open(BASEDIR + "browser_configs.json", 'w') as f:
         json.dump(getBrowserConfigs(),f)
