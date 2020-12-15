@@ -1,6 +1,5 @@
-configs/myinfo.json
-configs/info.json
-configs/browser_configs.json
+configs/*
+
 
 #util/__pycache__
 */__pycache__
@@ -12,6 +11,12 @@ model/Pchome.py
 
 demo.mov
 
+venv
+env
+
+build
+dist
+
 ### Example user template template
 ### Example user template
 
@@ -20,3 +25,4 @@ demo.mov
 *.iml
 out
 gen
+.python-version

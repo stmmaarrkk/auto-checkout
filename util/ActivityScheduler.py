@@ -22,7 +22,10 @@ class ActivityScheduler:
                 if input("按下Enter繼續或輸入任何字修改目標時間... ") == "":
                     break
     def waiting(self, delay=0.5, period=0.5):
-        clearPrint('現在請靜靜等到目標時間....同時確保網頁保持在 "追蹤清單" ')
+        clearPrint('現在請靜靜等到目標時間，並確保：....\n'
+                   '(1) 網頁保持在 "追蹤清單" 頁面\n'
+                   '(2) 滑鼠不要亂點(最好是點在程式的這個視窗裡面就好)\n'
+                   '(3) 在搶商品時，還沒自動輸入完結帳資訊前請勿亂點')
         while (self.targetTime- datetime.now()).total_seconds() > delay:
             time.sleep(period)
         

@@ -100,7 +100,7 @@ class Momo:
         TIMEOUTLIMIT = 0.1
         print("Filling out checkout info...")
         
-        self.browser.implicitly_wait(0.3)
+        self.browser.implicitly_wait(0.5)
 
         #fill out card number
         try:
