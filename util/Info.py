@@ -18,9 +18,8 @@ class Info:
         self.checkoutInfo = None
 
     def prepareInfo(self):
-        # result = clearInput('若想開啟自動登入功能，請輸入 "1"，否則請輸入任意字元): ')
-        # self.autoLogin = True if result == "1" else False
-        self.autoLogin = False
+        result = clearInput('若想開啟自動登入功能，請輸入 "1"，否則請輸入任意字元): ')
+        self.autoLogin = True if result == "1" else False
         
         prepareInfoOptions = [" 新增或重新填寫資料"] #0
         if os.path.isfile(self.infoName ):
@@ -111,15 +110,18 @@ class Info:
 
         self.validate()
 
-        ##special process
+        ##special validate and processes
+        #remove special characters from credit card
         self.checkoutInfo["card"]["number"] = self.checkoutInfo["card"]["number"].replace("-", "").replace(",", "")
+        #let preceeding 0 go
         if self.checkoutInfo["birthday"]["month"][0] == "0":
             self.checkoutInfo["birthday"]["month"] = self.checkoutInfo["birthday"]["month"][-1]
+        #let preceeding 0 go
         if self.checkoutInfo["birthday"]["day"][0] == "0":
             self.checkoutInfo["birthday"]["day"] = self.checkoutInfo["birthday"]["day"][-1]
+        #add preceeding 0
         if len(self.checkoutInfo["card"]["expired_month"]) == 1:
             self.checkoutInfo["card"]["expired_month"] = "0" + self.checkoutInfo["card"]["expired_month"]
-        
 
         ##dump to info.json
         with open(self.infoName, 'w', encoding='utf-8') as f:

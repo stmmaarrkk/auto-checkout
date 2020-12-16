@@ -20,55 +20,87 @@ class Momo:
         wait = WebDriverWait(self.browser, 10).until(
             EC.visibility_of_element_located((By.XPATH, "//span[@class='CL1']//a[@id='LOGINSTATUS']")))
         self.browser.find_element_by_xpath("//span[@class='CL1']//a[@id='LOGINSTATUS']").click()
-        
-        maxRetry = 2
-        first = True
-        for i in range(maxRetry+1):
-            if i == maxRetry:
-                input('失敗次數過多，請手動登入後，按 "Enter"繼續....')
-                break
-            try:
-                #password
-                print("Login attempt...") 
-                if first:
-                    wait = WebDriverWait(self.browser, 5).until(
-                        EC.visibility_of_element_located((By.ID, "passwd_show")))
-                    self.browser.find_element_by_id("passwd_show").click()
-                    first = False
-                else:
-                    try:
-                        print("passwd_show")
-                        self.browser.find_element_by_id("passwd_show").click()
-                    except:
-                        pass
-                
-                print("passwd_block")
-                blankPassword = self.browser.find_element_by_id("passwd")
-                blankPassword.clear
-                blankPassword.send_keys(self.info.loginInfo["password"])
 
-                #username
-                print("usrname")
-                blankUserame = self.browser.find_element_by_xpath("//input[@id='memId']")
-                blankUserame.clear
-                blankUserame.send_keys(self.info.loginInfo["username"])
+        # password
+        print("Login attempt...")
+        wait = WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located((By.ID, "passwd_show")))
+        self.browser.find_element_by_id("passwd_show").click()
 
-                self.browser.find_element_by_class_name("loginBtn").click()
+        print("passwd_block")
+        blankPassword = self.browser.find_element_by_id("passwd")
+        blankPassword.clear
+        blankPassword.send_keys(self.info.loginInfo["password"])
 
-                #if wait for 1 second, there is still a 註冊(class='CL4') button, then login again
-                self.browser.implicitly_wait(4)
-                try:
-                    self.browser.find_element_by_class_name("loginBtn").click()
-                except:
-                    clearPrint("Login succeeded!")
-                    self.browser.implicitly_wait(0.5)
-                    break
-                else:
-                    raise Exception
-            except:
-                continue
+        # username
+        print("usrname")
+        blankUserame = self.browser.find_element_by_xpath("//input[@id='memId']")
+        blankUserame.clear
+        blankUserame.send_keys(self.info.loginInfo["username"])
+
+        self.browser.find_element_by_class_name("loginBtn").click()
+
+
+
+
+
+
+
+
+
+
+
+        # maxRetry = 2
+        # first = True
+        # for i in range(maxRetry+1):
+        #     if i == maxRetry:
+        #         input('失敗次數過多，請手動登入後，按 "Enter"繼續....')
+        #         break
+        #     try:
+        #         #password
+        #         print("Login attempt...")
+        #         if first:
+        #             wait = WebDriverWait(self.browser, 5).until(
+        #                 EC.visibility_of_element_located((By.ID, "passwd_show")))
+        #             self.browser.find_element_by_id("passwd_show").click()
+        #             first = False
+        #         else:
+        #             try:
+        #                 print("passwd_show")
+        #                 self.browser.find_element_by_id("passwd_show").click()
+        #             except:
+        #                 pass
+        #
+        #         print("passwd_block")
+        #         blankPassword = self.browser.find_element_by_id("passwd")
+        #         blankPassword.clear
+        #         blankPassword.send_keys(self.info.loginInfo["password"])
+        #
+        #         #username
+        #         print("usrname")
+        #         blankUserame = self.browser.find_element_by_xpath("//input[@id='memId']")
+        #         blankUserame.clear
+        #         blankUserame.send_keys(self.info.loginInfo["username"])
+        #
+        #         self.browser.find_element_by_class_name("loginBtn").click()
+        #
+        #         #if wait for 1 second, there is still a 註冊(class='CL4') button, then login again
+        #         self.browser.implicitly_wait(4)
+        #         try:
+        #             self.browser.find_element_by_class_name("loginBtn").click()
+        #         except:
+        #             clearPrint("Login succeeded!")
+        #             self.browser.implicitly_wait(0.5)
+        #             break
+        #         else:
+        #             raise Exception
+        #     except:
+        #         continue
         
     def getItemInfoFromTrackList(self):
+        """
+        Redirect to wish list using the topbar
+        """
+
         print("Accessing track list...")
         #a element cover this thing, so we have to split click into 2-step
         wait = WebDriverWait(self.browser, 10).until(
@@ -94,17 +126,37 @@ class Momo:
         self.browser.find_element_by_xpath("//a[@name='{}' and @target='_blank']".format(self.itemTag)).click()
         self.browser.switch_to_window(self.browser.window_handles[-1])
         print("Item page redirected")
-    def addToCart(self):
+    def addToCart(self, test=False):
+        self.browser.switch_to_window(self.browser.window_handles[-1]) #switch to the most recent page
         # add to cart
         print("Adding item to cart...")
-        wait = WebDriverWait(self.browser, 10).until(
-            EC.visibility_of_element_located((By.XPATH, "//dd[@id='inCar']/a[1]")))
-        self.browser.find_element_by_xpath("//dd[@id='inCar']/a[1]").click()
-        print("Item added...")
+
+        representation = "//dd[@id='inCar' and not(contains(@style,'display:none'))]"
+        k = 0
+        while k< 100:
+            k += 1
+            try:
+                wait = WebDriverWait(self.browser, 0.1).until(
+                    EC.visibility_of_element_located((By.XPATH, representation)))
+                self.browser.find_element_by_xpath(representation).click()
+            except:
+                if not test:
+                    self.browser.refresh()
+                print("Page refresh...{}".format(k))
+            else:
+                print("Item added...")
+                break
+
+        if test:
+            if(len(input("press to close")) == 4):
+                return
+            else:
+                self.addToCart()
+        
 
     def checkOut(self, addToCart=True):
-        # #switch the last tab
-        # self.browser.switch_to.window(self.browser.window_handles[-1])
+        #switch the last tab
+        self.browser.switch_to.window(self.browser.window_handles[-1])
 
         print("Redirecting to checkout page...")
         #a element cover this thing, so we have to split click into 2-step
@@ -121,24 +173,38 @@ class Momo:
         print("Checkout page directed")
 
     def fillOutCheckoutForm(self):
-        TIMEOUTLIMIT = 0.1
+        #switch the last tab
+        self.browser.switch_to.window(self.browser.window_handles[-1])
+
+        TIMEOUTLIMIT = 5
         print("Filling out checkout info...")
-        
-        self.browser.implicitly_wait(0.5)
 
         #fill out card number
         try:
+            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+                    EC.visibility_of_element_located((By.CLASS_NAME, "cardNo")))
             blockCardNums = self.browser.find_element_by_class_name("cardNo").find_elements_by_xpath(".//*")[-4:]
             for i in range(4):
                 blockCardNums[i].clear
                 blockCardNums[i].send_keys(self.info.checkoutInfo["card"]["number"][4*i:4*i+4]) 
 
+            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+                    EC.visibility_of_element_located((By.NAME, "cardValidMonth")))
             element = Select(self.browser.find_element_by_name("cardValidMonth"))
             element.select_by_visible_text(self.info.checkoutInfo["card"]["expired_month"])
 
+            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+                    EC.visibility_of_element_located((By.NAME, "cardValidYear")))
             element = Select(self.browser.find_element_by_name("cardValidYear"))
             element.select_by_visible_text(self.info.checkoutInfo["card"]["expired_year"])
+            
+            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+                    EC.visibility_of_element_located((By.NAME, "cardCVV")))
+            blockCVV = self.browser.find_element_by_name("cardCVV")
+            blockCVV.clear
+            blockCVV.send_keys(self.info.checkoutInfo["card"]["security_code"])
         except Exception as e:
+            print("付款資訊填寫失敗")
             print(e)
 
 
@@ -158,6 +224,7 @@ class Momo:
                     EC.visibility_of_element_located((By.NAME, "birthDay")))
             element = Select(self.browser.find_element_by_name("birthDay"))
             element.select_by_visible_text(self.info.checkoutInfo["birthday"]["day"])
+            
         except Exception as e:
             print(e)
 

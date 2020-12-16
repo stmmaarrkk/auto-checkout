@@ -29,14 +29,17 @@ def main():
             clearInput('請手動登入網站並按下 "Enter"....')
 
         #shoppingSite.getItemInfoFromTrackList(itemTag="4836742") 
-        shoppingSite.getItemInfoFromTrackList() 
+        #shoppingSite.getItemInfoFromTrackList() 
         
-        activityScheduler = ActivityScheduler()
-        activityScheduler.queryTargetTime()
-        activityScheduler.waiting(delay=0.5, period=0.5)
+        # activityScheduler = ActivityScheduler()
+        # activityScheduler.queryTargetTime()
+        # activityScheduler.waiting(delay=0.5, period=0.5)
 
-        shoppingSite.goToItemPage()
-        shoppingSite.addToCart()
+        #shoppingSite.goToItemPage()
+        if input('點到商品頁面後回來這再按下 "Enter" 就會看到頁面重複刷新直到成功將商品放入購物車') == "test":
+            shoppingSite.addToCart(test=True)
+        else:
+            shoppingSite.addToCart(test=False)
         shoppingSite.checkOut()
         shoppingSite.fillOutCheckoutForm()
 if __name__ == "__main__":

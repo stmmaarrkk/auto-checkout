@@ -29,7 +29,8 @@ def getInfoTemplate():
             "card": {
                 "number": "1234567887654321 (信用卡號 16碼)",
                 "expired_year": "2025",
-                "expired_month": "07"
+                "expired_month": "07",
+                "security_code": "123"
             }
         }
     }
