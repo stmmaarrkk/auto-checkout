@@ -123,7 +123,11 @@ class Momo:
                 
     def goToItemPage(self):
         print("Redirecting to item page...")
-        self.browser.find_element_by_xpath("//a[@name='{}' and @target='_blank']".format(self.itemTag)).click()
+
+        representation = "//a[@name='{}' and @target='_blank']".format(self.itemTag)
+        wait = WebDriverWait(self.browser, 10).until(
+                    EC.visibility_of_element_located((By.XPATH, representation)))
+        self.browser.find_element_by_xpath(representation).click()
         self.browser.switch_to_window(self.browser.window_handles[-1])
         print("Item page redirected")
     def addToCart(self, period=0.1):
@@ -151,13 +155,14 @@ class Momo:
         print("Redirecting to checkout page...")
         #a element cover this thing, so we have to split click into 2-step
         #go to checkout from item page
+        wait = WebDriverWait(self.browser, 10).until(
+                    EC.visibility_of_element_located((By.XPATH, "//li[@class='checkoutBtn']/a[1]")))
         element = self.browser.find_element_by_xpath("//li[@class='checkoutBtn']/a[1]") 
         self.browser.execute_script("arguments[0].click();", element)
 
         #checkout
         wait = WebDriverWait(self.browser, 10).until(
             EC.visibility_of_element_located((By.XPATH, "//li[@class='checkoutBtn']/a[1]")))
-
         element = self.browser.find_element_by_xpath("//li[@class='checkoutBtn']/a[1]") 
         self.browser.execute_script("arguments[0].click();", element)
         print("Checkout page directed")
@@ -166,7 +171,7 @@ class Momo:
         #switch the last tab
         self.browser.switch_to.window(self.browser.window_handles[-1])
 
-        TIMEOUTLIMIT = 5
+        TIMEOUTLIMIT = 1
         print("Filling out checkout info...")
 
         #fill out card number
@@ -205,70 +210,58 @@ class Momo:
             element = Select(self.browser.find_element_by_name("birthYear"))
             element.select_by_visible_text(self.info.checkoutInfo["birthday"]["year"])
             
-            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
-                    EC.visibility_of_element_located((By.NAME, "birthMonth")))
+            # wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+            #         EC.visibility_of_element_located((By.NAME, "birthMonth")))
             element = Select(self.browser.find_element_by_name("birthMonth"))
             element.select_by_visible_text(self.info.checkoutInfo["birthday"]["month"])
             
-            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
-                    EC.visibility_of_element_located((By.NAME, "birthDay")))
+            # wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+            #         EC.visibility_of_element_located((By.NAME, "birthDay")))
             element = Select(self.browser.find_element_by_name("birthDay"))
             element.select_by_visible_text(self.info.checkoutInfo["birthday"]["day"])
-            
-        except Exception as e:
-            print(e)
 
         #fill out mobile phone
-        try:
             phone = self.info.checkoutInfo["mobile"]
             areaCode, number = phone[:2], phone[2:]
 
+            # wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+            #         EC.visibility_of_element_located((By.NAME, "defReceiverDDD")))
             blockAreaCode = self.browser.find_element_by_name("defReceiverDDD")
             blockAreaCode.clear
             blockAreaCode.send_keys(areaCode)
 
+            # wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+            #         EC.visibility_of_element_located((By.NAME, "defReceiverTel")))
             blockNumber = self.browser.find_element_by_name("defReceiverTel")
             blockNumber.clear
             blockNumber.send_keys(number)
-        except Exception as e:
-            print(e)
 
         #fill out address
-        try:
-            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
-                EC.visibility_of_element_located((By.NAME, "defReceiverCity")))
+            # wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+            #     EC.visibility_of_element_located((By.NAME, "defReceiverCity")))
             element = Select(self.browser.find_element_by_name("defReceiverCity"))
             element.select_by_visible_text(self.info.checkoutInfo["address"]["city"])
-        except Exception as e:
-            print(e)
-        try:
-            wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
-                EC.visibility_of_element_located((By.NAME, "defReceiverPost")))
+        
+            # wait = WebDriverWait(self.browser, TIMEOUTLIMIT).until(
+            #     EC.visibility_of_element_located((By.NAME, "defReceiverPost")))
             element = Select(self.browser.find_element_by_name("defReceiverPost"))
             element.select_by_visible_text(self.info.checkoutInfo["address"]["post"])
-        except Exception as e:
-            print(e)
-        try:
+        
             blockAddress= self.browser.find_element_by_name("defReceiverAddr")
             blockAddress.clear
             blockAddress.send_keys(self.info.checkoutInfo["address"]["full_address"])
-        except Exception as e:
-            print(e)
 
         #fill out ID
-        try:
             blockId= self.browser.find_element_by_name("residentNo")
             blockId.clear
             blockId.send_keys(self.info.checkoutInfo["ID"])
-        except Exception as e:
-            print(e)
 
         #check the receiver box
-        try:
             self.browser.implicitly_wait(0.2)
             self.browser.find_element_by_xpath("//input[@receiver_type='01']").click()
 
         except Exception as e:
+            print("基本資訊填寫失敗")
             print(e)
 
         print("Checkout info completed")
