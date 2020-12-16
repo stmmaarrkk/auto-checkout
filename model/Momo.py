@@ -126,33 +126,23 @@ class Momo:
         self.browser.find_element_by_xpath("//a[@name='{}' and @target='_blank']".format(self.itemTag)).click()
         self.browser.switch_to_window(self.browser.window_handles[-1])
         print("Item page redirected")
-    def addToCart(self, test=False):
+    def addToCart(self, period=0.1):
         self.browser.switch_to_window(self.browser.window_handles[-1]) #switch to the most recent page
         # add to cart
         print("Adding item to cart...")
 
         representation = "//dd[@id='inCar' and not(contains(@style,'display:none'))]"
-        k = 0
-        while k< 100:
-            k += 1
+        while True:
             try:
-                wait = WebDriverWait(self.browser, 0.1).until(
+                wait = WebDriverWait(self.browser, period).until(
                     EC.visibility_of_element_located((By.XPATH, representation)))
                 self.browser.find_element_by_xpath(representation).click()
             except:
-                if not test:
-                    self.browser.refresh()
-                print("Page refresh...{}".format(k))
+                self.browser.refresh()
+                print("Page refresh...")
             else:
                 print("Item added...")
                 break
-
-        if test:
-            if(len(input("press to close")) == 4):
-                return
-            else:
-                self.addToCart()
-        
 
     def checkOut(self, addToCart=True):
         #switch the last tab
