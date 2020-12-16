@@ -1,6 +1,11 @@
 # -*- coding: UTF-8 -*-
 import json
 import os
+from bs4 import BeautifulSoup
+import requests
+from urllib.request import urlopen
+from zipfile import ZipFile
+from io import BytesIO
 
 def getInfoTemplate():
     return {
@@ -34,6 +39,7 @@ def getBrowserConfigs():
         "chrome_driver_version": "", 
         "user_agent": ""}
 def getUserAgentPool():
+
     return [
         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
@@ -81,22 +87,59 @@ def getUserAgentPool():
         "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/44.0.2403.155 Safari/537.36",
     ]
 
+def downloadChromeDriver(configs):
+    ## find resource
+    print("Locating driver URL...")
+    homeURL = "https://chromedriver.chromium.org"
+    response = requests.get(homeURL)
+    soup = BeautifulSoup(response.text, "html.parser")
+    version = soup.find('span', text='Latest stable ').parent.find('a', href=True).text
+    version = version.replace("ChromeDriver", "").replace(" ", "")
+    downloadURL = "https://chromedriver.storage.googleapis.com/{}/chromedriver_mac64.zip".format(version)
+    #"https://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_mac64.zip"
+
+    #download and unzip
+    print("Downloading driver from {}".format(downloadURL))
+    with urlopen(downloadURL) as zipresp:
+        with ZipFile(BytesIO(zipresp.read())) as zfile:
+            # delete old driver
+            if os.path.isfile(configs["chrome_driver_path"]):
+                os.remove(configs["chrome_driver_path"])
+
+            zfile.extractall(path=configs["chrome_driver_path"].replace("chromedriver", ""))
+
+        os.chmod(configs["chrome_driver_path"], 0o755)  # change mode to excutable
+
+    # save version it will be used in user-agent
+    configs["chrome_driver_version"] = version
+
+    print("Driver downloaded and extracted at {}".format(configs["chrome_driver_path"]))
+    return configs
 
 def main():
     BASEDIR = "./configs/"
     if os.path.isdir(BASEDIR):
         os.system("rm -r {}".format(BASEDIR))
     os.mkdir(BASEDIR)
+    os.chmod(BASEDIR, 0o777)
+
+    browserConfigs = getBrowserConfigs()
+
+    browserConfigs = downloadChromeDriver(browserConfigs)
 
     with open(BASEDIR + "browser_configs.json", 'w') as f:
-        json.dump(getBrowserConfigs(),f)
+        json.dump(browserConfigs,f)
+    os.chmod(BASEDIR + "browser_configs.json", 0o766)
+    
 
     with open(BASEDIR + "info_template.json", 'w') as f:
         json.dump(getInfoTemplate(),f)
+    os.chmod(BASEDIR + "info_template.json", 0o766)
 
     with open(BASEDIR + "user_agent_pool", "w") as f:
         for s in getUserAgentPool():
             f.write(s +"\n")
+    os.chmod(BASEDIR + "user_agent_pool", 0o766)
 
 
 if __name__ == "__main__":

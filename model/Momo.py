@@ -12,39 +12,51 @@ class Momo:
 
         self.homeURL = "https://www.momoshop.com.tw/main/Main.jsp"
         self.browser.get(self.homeURL) 
-        self.browser.implicitly_wait(0.5)
 
         self.itemTag = None
     
     def login(self):
         # driver.find
-        
+        wait = WebDriverWait(self.browser, 10).until(
+            EC.visibility_of_element_located((By.XPATH, "//span[@class='CL1']//a[@id='LOGINSTATUS']")))
         self.browser.find_element_by_xpath("//span[@class='CL1']//a[@id='LOGINSTATUS']").click()
         
-        maxRetry = 3
+        maxRetry = 2
+        first = True
         for i in range(maxRetry+1):
             if i == maxRetry:
-                clearInput('失敗次數過多，請手動登入後，按 "Enter"繼續....')
+                input('失敗次數過多，請手動登入後，按 "Enter"繼續....')
                 break
             try:
-                print("Login attempt...") 
                 #password
-                try:
+                print("Login attempt...") 
+                if first:
+                    wait = WebDriverWait(self.browser, 5).until(
+                        EC.visibility_of_element_located((By.ID, "passwd_show")))
                     self.browser.find_element_by_id("passwd_show").click()
-                except:
-                    pass
+                    first = False
+                else:
+                    try:
+                        print("passwd_show")
+                        self.browser.find_element_by_id("passwd_show").click()
+                    except:
+                        pass
+                
+                print("passwd_block")
                 blankPassword = self.browser.find_element_by_id("passwd")
                 blankPassword.clear
                 blankPassword.send_keys(self.info.loginInfo["password"])
 
                 #username
+                print("usrname")
                 blankUserame = self.browser.find_element_by_xpath("//input[@id='memId']")
                 blankUserame.clear
                 blankUserame.send_keys(self.info.loginInfo["username"])
+
                 self.browser.find_element_by_class_name("loginBtn").click()
 
                 #if wait for 1 second, there is still a 註冊(class='CL4') button, then login again
-                self.browser.implicitly_wait(3)
+                self.browser.implicitly_wait(4)
                 try:
                     self.browser.find_element_by_class_name("loginBtn").click()
                 except:

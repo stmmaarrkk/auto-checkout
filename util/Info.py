@@ -18,8 +18,9 @@ class Info:
         self.checkoutInfo = None
 
     def prepareInfo(self):
-        result = clearInput('若想開啟自動登入功能，請輸入 "1"，否則請輸入任意字元): ')
-        self.autoLogin = True if result == "1" else False
+        # result = clearInput('若想開啟自動登入功能，請輸入 "1"，否則請輸入任意字元): ')
+        # self.autoLogin = True if result == "1" else False
+        self.autoLogin = False
         
         prepareInfoOptions = [" 新增或重新填寫資料"] #0
         if os.path.isfile(self.infoName ):
@@ -65,12 +66,13 @@ class Info:
                             f)
                         f.write("\n填完儲存完後，關閉此檔案並回到程式視窗")
                     
+                    # Mode to be set  
                     os.system("open {}".format(self.rawTxtName))
-                    clearInput('填完資料後在此處按 "Enter"....')
+                    input('填完資料後關閉檔案在此處按 "Enter"....')
                     self.processedRawTxt(remove=True)
                     
                 except Exception as e:
-                    print(e)
+                    clearPrint(e)
                     print("請重新填寫")
                     if os.path.isfile(self.infoName): #load existed one
                         self.load(self.infoName, needValidate=False) 
