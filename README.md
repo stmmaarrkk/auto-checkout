@@ -5,9 +5,9 @@ This is a program contains various helper functions for Momo.
 
 ### Features ###
 <ul>
-    <li>Automatically fill out the checkout form.
-    <li>Automatically put a certain item into cart and perform checkout at a specified time assgined by user.
-    <li> Automatically login.
+  <li> Automatically login.
+  <li> Automatically fill out the checkout form.
+  <li> Automatically refresh the page to check if there is an add-to-cart button and put that item into cart and perform checkout.
 </ul>
 
 ### Prerequisites ###
@@ -45,4 +45,11 @@ Shell: bash 3.2
 <ul>
   <li> Perform downloading chrome driver at setup
   <li> Temporarily pause auto-login
+</ul>
+
+**2020/12/17**
+<ul>
+  <li> Add local cache to program browser to load page faster
+  <li> Activate auto-login function
+  <li> Add auto refresh and add-to-cart function
 </ul>
