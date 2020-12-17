@@ -90,14 +90,14 @@ def getUserAgentPool():
     ]
 def copyChromeCache():
     print("Copy chrome cache(It may take a few minutes)...")
-    baseDir = os.path.expanduser("~/Library/Caches/Google/Chrome/")
+
+    profile = os.path.expanduser("~/Library/Application Support/Google/Chrome/Default")
+
     try:
-        profile = os.listdir(baseDir)[0]
-        profile = baseDir + profile
+        os.listdir(profile)
     except Exception as e:
         print(e)
-        print(baseDir)
-        profile = input("請輸入完整chrome profile的\"絕對\"路徑(Ex: /User/..../Chrome/Profile 1)").strip()
+        profile = input("請輸入完整chrome profile的\"絕對\"路徑(Ex: /User/..../Chrome/Default)").strip()
     copy_tree(profile, "./configs/chrodasme_profile")
     print("Chrome cache copied...")
 def downloadChromeDriver(configs):
