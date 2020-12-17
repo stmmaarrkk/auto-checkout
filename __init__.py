@@ -89,16 +89,16 @@ def getUserAgentPool():
         "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/44.0.2403.155 Safari/537.36",
     ]
 def copyChromeCache():
-    print("Copy chrome cache...")
+    print("Copy chrome cache(It may take a few minutes)...")
     baseDir = os.path.expanduser("~/Library/Caches/Google/Chrome/")
     try:
         profile = os.listdir(baseDir)[0]
+        profile = baseDir + profile
     except Exception as e:
         print(e)
         print(baseDir)
-        profile = input("請輸入chrome快取位置").strip()
-    profile = baseDir + profile
-    copy_tree(profile, "./configs/chrome_profile")
+        profile = input("請輸入完整chrome profile的\"絕對\"路徑(Ex: /User/..../Chrome/Profile 1)").strip()
+    copy_tree(profile, "./configs/chrodasme_profile")
     print("Chrome cache copied...")
 def downloadChromeDriver(configs):
     ## find resource
