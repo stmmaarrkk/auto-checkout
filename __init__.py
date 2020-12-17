@@ -6,6 +6,7 @@ import requests
 from urllib.request import urlopen
 from zipfile import ZipFile
 from io import BytesIO
+from distutils.dir_util import copy_tree
 
 def getInfoTemplate():
     return {
@@ -87,7 +88,18 @@ def getUserAgentPool():
         "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1866.237 Safari/537.36",
         "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/44.0.2403.155 Safari/537.36",
     ]
-
+def copyChromeCache():
+    print("Copy chrome cache...")
+    baseDir = os.path.expanduser("~/Library/Caches/Google/Chrome/")
+    try:
+        profile = os.listdir(baseDir)[0]
+    except Exception as e:
+        print(e)
+        print(baseDir)
+        profile = input("請輸入chrome快取位置").strip()
+    profile = baseDir + profile
+    copy_tree(profile, "./configs/chrome_profile")
+    print("Chrome cache copied...")
 def downloadChromeDriver(configs):
     ## find resource
     print("Locating driver URL...")
@@ -142,6 +154,8 @@ def main():
             f.write(s +"\n")
     os.chmod(BASEDIR + "user_agent_pool", 0o766)
 
+    ##get chrome cache
+    copyChromeCache()
 
 if __name__ == "__main__":
     main()

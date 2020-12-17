@@ -30,6 +30,7 @@ class Bootstrap:
         # inject configs
         chromeOptions = webdriver.ChromeOptions()
         chromeOptions.add_argument('User-Agent="{}"'.format(self.configs["user_agent"]))
+        chromeOptions.add_argument('user-data-dir="./configs/chrome_profile"');
 
         #launch browser
         return webdriver.Chrome(executable_path=self.configs["chrome_driver_path"], options=chromeOptions)
