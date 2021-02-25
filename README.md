@@ -11,7 +11,7 @@ This is a program contains various helper functions for Momo.
 </ul>
 
 ### Demo video ###
-[![](https://youtu.be/byn7ik9PS28 "Demo Video")
+[![](https://youtu.be/byn7ik9PS28 "Demo Video")]
 
 ### Prerequisites ###
 <ul>
