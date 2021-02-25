@@ -10,6 +10,9 @@ This is a program contains various helper functions for Momo.
   <li> Automatically refresh the page to check if there is an add-to-cart button and put that item into cart and perform checkout.
 </ul>
 
+### Demo video ###
+[![](https://youtu.be/byn7ik9PS28 "Demo Video")
+
 ### Prerequisites ###
 <ul>
   <li> MacOS, Chrome.
